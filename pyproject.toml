@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pipeplan"
+version = "0.1.0"
+description = "A lightweight, production-ready Python framework for building resilient, DAG-based data pipelines."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pandas>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "mypy>=1.0",
+]
+
+# Plugin Registration: Built-in operations are registered internally, but external ones are defined here.
+# Entry points tie directly into the _load_plugins logic in Operation class.
+
+# [project.entry-points."pipeplan.resource.file"]
+# json = "pipeplan.resources:JsonAdapter"
+
+# [project.entry-points."pipeplan.transfer"]
+# extract = "pipeplan.transfers:_extract"
+# load = "pipeplan.transfers:_load"
+
+# [project.entry-points."pipeplan.transform.element"]
+# clean_strings = "pipeplan.transforms:clean_strings"
+
+# [project.entry-points."pipeplan.transform.set"]
+# filter_rows = "pipeplan.transforms:filter_rows"
