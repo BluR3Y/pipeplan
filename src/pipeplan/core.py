@@ -54,12 +54,18 @@ class ExecutionContext:
         self._tokens.append(current_context.set(self))
         return self
 
-    def __exit__(self, exc_type, exc, tb):
-        # Pop and reset the most recent token
-        if self._tokens:
-            current_context.reset(self._tokens.pop())
+    # def __exit__(self, exc_type, exc, tb):
+    #     # Pop and reset the most recent token
+    #     if self._tokens:
+    #         current_context.reset(self._tokens.pop())
             
-        # ONLY close resources if we are completely exiting the outermost block!
+    #     # ONLY close resources if we are completely exiting the outermost block!
+    #     if not self._tokens:
+    #         self.close_all()
+    def __exit__(self, exc_type, exc, tb):
+        token = self._tokens.pop() if self._tokens else None
+        if token:
+            current_context.reset(token)
         if not self._tokens:
             self.close_all()
 
@@ -294,7 +300,15 @@ class Pipeline:
                     
                     for future in done:
                         node_id = running_tasks.pop(future)
-                        future.result()  
-                        ts.done(node_id)
+                        # future.result()  
+                        # ts.done(node_id)
+                        try:
+                            future.result()
+                            ts.done(node_id)
+                        except Exception as e:
+                            # Cancel all pending futures
+                            for pending in running_tasks:
+                                pending.cancel()
+                            raise RuntimeError(f"Task '{node_id}' failed: {e}") from e
                         
         log.info(f"Pipeline '{self.id}' execution finished.")

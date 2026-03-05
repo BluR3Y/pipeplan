@@ -31,9 +31,11 @@ class Operation(ABC):
     
     @classmethod
     def _load_plugins(cls, type_id: str):
-        if getattr(cls, "_plugins_loaded", False):
+        # if getattr(cls, "_plugins_loaded", False):
+        #     return
+        if cls.__dict__.get("_plugins_loaded", False):
             return
-        
+
         try:
             group_name = f"pipeplan.{type_id}"
             eps = entry_points()
@@ -63,7 +65,12 @@ class Operation(ABC):
 
     @classmethod
     def get_operation(cls, name: str) -> Callable:
-        if not getattr(cls, "_plugins_loaded", False):
+        # if not getattr(cls, "_plugins_loaded", False):
+        #     for t_id, t_cls in cls._OPERATION_REGISTRY.items():
+        #         if t_cls is cls:
+        #             cls._load_plugins(t_id)
+        #             break
+        if cls.__dict__.get("_plugins_loaded", False):
             for t_id, t_cls in cls._OPERATION_REGISTRY.items():
                 if t_cls is cls:
                     cls._load_plugins(t_id)

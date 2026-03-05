@@ -74,8 +74,6 @@ class PipelineParser:
             adapter_name = res_cfg["adapter"]
             # Assuming resources are registered under "resource.{adapter_name}"
             try:
-                # AdapterClass = Operation.get_operation_type(f"resource").get_operation(adapter_name)
-                print(Operation._OPERATION_REGISTRY)
                 AdapterClass = PipelineParser._resolve_function(adapter_name)
             except KeyError:
                 # Fallback if registered directly without sub-types
